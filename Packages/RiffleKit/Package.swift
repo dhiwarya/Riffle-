@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "RiffleTheory", targets: ["RiffleTheory"]),
         .library(name: "RiffleDesign", targets: ["RiffleDesign"]),
         .library(name: "RiffleStore", targets: ["RiffleStore"]),
+        .library(name: "RiffleAudio", targets: ["RiffleAudio"]),
     ],
     targets: [
         // Pure music theory: notes, intervals, scales, chords, tunings, voicings.
@@ -19,9 +20,12 @@ let package = Package(
         ),
         // SwiftData schema, preferences and streak logic.
         .target(name: "RiffleStore", dependencies: ["RiffleTheory"]),
+        // Microphone capture, pitch detection, chord verification, test-clip corpus.
+        .target(name: "RiffleAudio", dependencies: ["RiffleTheory"]),
 
         .testTarget(name: "RiffleTheoryTests", dependencies: ["RiffleTheory"]),
         .testTarget(name: "RiffleDesignTests", dependencies: ["RiffleDesign"]),
         .testTarget(name: "RiffleStoreTests", dependencies: ["RiffleStore"]),
+        .testTarget(name: "RiffleAudioTests", dependencies: ["RiffleAudio", "RiffleTheory"]),
     ]
 )

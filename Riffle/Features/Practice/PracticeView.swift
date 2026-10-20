@@ -13,6 +13,7 @@ struct PracticeView: View {
     @AppStorage(Pref.tuningID) private var tuningID = Pref.Default.tuningID
     @AppStorage(Pref.dailyMinutes) private var dailyMinutes = Pref.Default.dailyMinutes
     @State private var comingSoon: ComingSoon?
+    @State private var showClipRecorder = false
 
     // Until the planner exists (M5), Today shows a fixed sample plan.
     private let plan = TodayPlan.sample
@@ -26,6 +27,9 @@ struct PracticeView: View {
                 EarCheckCard(plan: plan) { comingSoon = .earCheck }.riseIn(delay: 0.35)
                 TuneUpRow(tuning: currentTuning, action: openTuner).riseIn(delay: 0.45)
                 FreePracticeSection { comingSoon = $0 }.riseIn(delay: 0.5)
+                #if DEBUG
+                devTools
+                #endif
             }
             .padding(.horizontal, 20)
             .padding(.top, 16)
@@ -34,7 +38,33 @@ struct PracticeView: View {
         .scrollIndicators(.hidden)
         .background(DotGridBackground())
         .fullScreenCover(item: $comingSoon) { ComingSoonView(feature: $0) }
+        #if DEBUG
+        .fullScreenCover(isPresented: $showClipRecorder) { ClipRecorderView() }
+        #endif
     }
+
+    #if DEBUG
+    /// Debug builds only: the M1 clip recorder.
+    private var devTools: some View {
+        Button { showClipRecorder = true } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "waveform.badge.mic").font(.system(size: 18, weight: .semibold))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Clip recorder").riffleFont(.body, size: 16, weight: .bold)
+                    Text("Dev tool · record the detection test clips").riffleFont(.body, size: 13).foregroundStyle(RiffleColor.textMuted)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right").font(.system(size: 15, weight: .bold)).foregroundStyle(RiffleColor.textDim)
+            }
+            .foregroundStyle(RiffleColor.text)
+            .padding(14)
+            .riffleCard(cornerRadius: 20, fill: RiffleColor.surface, border: RiffleColor.border)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(.top, 6)
+    }
+    #endif
 
     private var header: some View {
         HStack(alignment: .bottom, spacing: 12) {

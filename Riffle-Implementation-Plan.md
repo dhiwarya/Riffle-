@@ -83,7 +83,7 @@ Riffle.xcodeproj
 │   ├── RiffleTheory            Pure Swift music theory (no UIKit/AVFoundation)        ✅ M0
 │   ├── RiffleDesign            Tokens, bundled fonts, shared components, animations   ✅ M0
 │   ├── RiffleStore             SwiftData models, preferences, streak logic            ✅ M0
-│   ├── RiffleAudio             AVAudioEngine, mic session, pitch + chord detectors, synth (M1–M3)
+│   ├── RiffleAudio             Mic capture, MPM pitch detector, chord verifier, test corpus    🟡 M1 (needs recordings)
 │   └── RiffleQuiz              Item model, scheduler (spaced repetition), daily planner, levels (M5)
 └── Features/
     ├── Today/  Tuner/  ChordQuiz/  ChordReveal/  EarCheck/
@@ -403,7 +403,7 @@ Design pass order: each screen is designed in SwiftUI previews at the start of t
 | # | Milestone | Scope | Est. |
 |---|---|---|---|
 | M0 | Foundations | Xcode project + packages, design tokens/fonts/components, RiffleTheory with tests (incl. degree spelling), SwiftData schema, tab shell | 1 wk |
-| M1 | DSP core | Record the clip corpus; MPM pitch detector; chord verifier; tune thresholds on device | 1 wk |
+| M1 | DSP core | Record the clip corpus; MPM pitch detector; chord verifier; tune thresholds on device. **Status:** detectors, synthetic tests, in-app clip recorder and corpus test runner done; waiting on the 116 recordings (`Corpus/README.md`) to tune thresholds | 1 wk |
 | M2 | Tuner | Full tuner screen, presets + custom tuning editor, A4, auto/manual, built‑in‑mic routing, permission flows | 1.5 wk |
 | M3 | Ear check | Sampler, cadence scheduling, degree/name/solfège answer modes, new difficulty ladder + staircase, rounds, results | 1.5 wk |
 | M4 | Chord quiz + reveal | Live verification UI, feedback generator, voicing data + generator, reveal screen, results | 2.5 wk |
