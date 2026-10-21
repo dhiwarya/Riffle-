@@ -103,9 +103,7 @@ struct PracticeView: View {
     }
 
     private var currentTuning: Tuning {
-        Tuning.preset(id: tuningID)
-            ?? customTunings.first { $0.id == tuningID }?.tuning
-            ?? .standard
+        Tuning.resolve(id: tuningID, custom: customTunings)
     }
 
     /// "MON · 20 OCT".

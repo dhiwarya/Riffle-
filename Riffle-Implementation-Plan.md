@@ -143,7 +143,7 @@ Tuning presets: Standard (E A D G B E), Drop D, Half‑step down (E♭), Full‑
 
 ### 5.3 Logic
 - **Auto mode:** nearest string in the current tuning (by \|cents\|), with hysteresis: switch only when another string has been closest for ≥ 150 ms.
-- **Manual mode:** user taps a peg; detection is constrained to that string.
+- **Manual mode:** user taps a peg; detection is constrained to that string. Tapping a peg while in Auto switches to Manual.
 - **In tune:** \|cents\| ≤ 3 for ≥ 400 ms → mark string tuned, success haptic, lime glow (matches mockup). When all 6 are tuned → "All six strings in tune. Go play." and record a `tuned` event for the day (feeds the streak/Today card).
 - Hint text: "Too low — tighten" / "Too high — loosen". Optional "reverse peg direction" setting is not needed (we say tighten/loosen, not left/right).
 - Header shows tuning name + A4; tapping it opens the **tuning picker sheet** (presets, custom tunings, "+ New tuning", A4 stepper 430–450 Hz).
@@ -404,7 +404,7 @@ Design pass order: each screen is designed in SwiftUI previews at the start of t
 |---|---|---|---|
 | M0 | Foundations | Xcode project + packages, design tokens/fonts/components, RiffleTheory with tests (incl. degree spelling), SwiftData schema, tab shell | 1 wk |
 | M1 | DSP core | Record the clip corpus; MPM pitch detector; chord verifier; tune thresholds on device. **Status:** detectors, synthetic tests, in-app clip recorder and corpus test runner done; waiting on the 116 recordings (`Corpus/README.md`) to tune thresholds | 1 wk |
-| M2 | Tuner | Full tuner screen, presets + custom tuning editor, A4, auto/manual, built‑in‑mic routing, permission flows | 1.5 wk |
+| M2 | Tuner | Full tuner screen, presets + custom tuning editor, A4, auto/manual, built‑in‑mic routing, permission flows. **Status:** built; verified in the simulator with synthetic plucks (debug `-tunerDemo` launch argument). Real-guitar accuracy is confirmed by the tuner clips in the M1 corpus | 1.5 wk |
 | M3 | Ear check | Sampler, cadence scheduling, degree/name/solfège answer modes, new difficulty ladder + staircase, rounds, results | 1.5 wk |
 | M4 | Chord quiz + reveal | Live verification UI, feedback generator, voicing data + generator, reveal screen, results | 2.5 wk |
 | M5 | Personalisation | Item states, grading, scheduler, **minutes‑based planner** with self‑calibrating time costs, levels, Today screen wired to real data, streaks | 1.5 wk |

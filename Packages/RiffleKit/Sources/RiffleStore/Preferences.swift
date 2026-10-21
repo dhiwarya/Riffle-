@@ -18,6 +18,8 @@ public enum Pref {
     public static let onboardingDone = "pref.onboardingDone"
     public static let chordLevel = "pref.chordLevel"
     public static let earDifficulty = "pref.earDifficulty"
+    /// "auto" or "manual".
+    public static let tunerMode = "pref.tunerMode"
 
     public enum Default {
         public static let a4Hz = 440.0

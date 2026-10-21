@@ -12,7 +12,7 @@ struct RootView: View {
     var body: some View {
         ZStack {
             screen(.practice) { PracticeView(openTuner: { tab = .tuner }) }
-            screen(.tuner) { TunerView() }
+            screen(.tuner) { TunerView(isActive: tab == .tuner) }
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             RiffleTabBar(selection: $tab)

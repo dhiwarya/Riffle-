@@ -1,4 +1,5 @@
 import Foundation
+import RiffleTheory
 import Testing
 @testable import RiffleAudio
 
@@ -70,5 +71,43 @@ struct CorpusEvaluatorTests {
         #expect(confusionsPassed.isEmpty)
         #expect(report.pitch.first?.passed == true, "\(String(describing: report.pitch.first?.measuredCents))")
         #expect(report.markdown.contains("Correct chords passed | 100.0 %"))
+    }
+}
+
+/// Dev aid: `RIFFLE_ANALYZE=/path/clip.wav swift test --filter analyzeFile` prints what the tuner hears.
+struct AnalyzeFileTool {
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["RIFFLE_ANALYZE"] != nil))
+    func analyzeFile() throws {
+        let url = URL(fileURLWithPath: ProcessInfo.processInfo.environment["RIFFLE_ANALYZE"]!)
+        let clip = try AudioClip.load(from: url)
+        let tracker = PitchTracker(sampleRate: clip.sampleRate)
+        let engine = TunerEngine()
+        for reading in tracker.process(clip.samples) {
+            let state = engine.process(reading)
+            let note = Note.nearest(to: reading.frequency)
+            print(String(format: "%.2fs  %7.2f Hz  %@ %+.1f¢  clarity %.2f  level %.0f dB  → string %d %@",
+                         reading.time, reading.frequency, note.note.spelled().description, note.cents, reading.clarity,
+                         reading.levelDB, Tuning.stringNumber(forIndex: state.selectedString),
+                         state.cents.map { String(format: "%+.1f¢", $0) } ?? "–"))
+        }
+    }
+}
+
+extension AnalyzeFileTool {
+    /// `RIFFLE_PEAKS=/path/clip.wav swift test --filter printPeaks` prints the strongest spectral peaks every 0.5 s.
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["RIFFLE_PEAKS"] != nil))
+    func printPeaks() throws {
+        let clip = try AudioClip.load(from: URL(fileURLWithPath: ProcessInfo.processInfo.environment["RIFFLE_PEAKS"]!))
+        let estimator = NoteEstimator(sampleRate: clip.sampleRate)
+        var start = 0
+        while start + estimator.windowSize <= clip.samples.count {
+            let window = Array(clip.samples[start..<start + estimator.windowSize])
+            let peaks = window.withUnsafeBufferPointer { estimator.peaks(in: $0) }
+            let top = peaks.sorted { $0.magnitude > $1.magnitude }.prefix(6)
+            let loudest = top.first?.magnitude ?? 1
+            let text = top.map { String(format: "%.0fHz(%.0fdB)", $0.frequency, 20 * log10($0.magnitude / loudest)) }.joined(separator: " ")
+            print(String(format: "%.1fs ", Double(start) / clip.sampleRate) + text)
+            start += Int(clip.sampleRate / 2)
+        }
     }
 }
