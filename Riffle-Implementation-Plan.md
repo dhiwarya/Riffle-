@@ -84,7 +84,7 @@ Riffle.xcodeproj
 │   ├── RiffleDesign            Tokens, bundled fonts, shared components, animations   ✅ M0
 │   ├── RiffleStore             SwiftData models, preferences, streak logic            ✅ M0
 │   ├── RiffleAudio             Mic capture, MPM pitch detector, chord verifier, test corpus    🟡 M1 (needs recordings)
-│   └── RiffleQuiz              Item model, scheduler (spaced repetition), daily planner, levels (M5)
+│   └── RiffleQuiz              Ear-check sessions ✅ M3; item model, scheduler, daily planner, levels (M5)
 └── Features/
     ├── Today/  Tuner/  ChordQuiz/  ChordReveal/  EarCheck/
     ├── Results/  Progress/  Settings/  Onboarding/  TuningEditor/
@@ -405,7 +405,7 @@ Design pass order: each screen is designed in SwiftUI previews at the start of t
 | M0 | Foundations | Xcode project + packages, design tokens/fonts/components, RiffleTheory with tests (incl. degree spelling), SwiftData schema, tab shell | 1 wk |
 | M1 | DSP core | Record the clip corpus; MPM pitch detector; chord verifier; tune thresholds on device. **Status:** detectors, synthetic tests, in-app clip recorder and corpus test runner done; waiting on the 116 recordings (`Corpus/README.md`) to tune thresholds | 1 wk |
 | M2 | Tuner | Full tuner screen, presets + custom tuning editor, A4, auto/manual, built‑in‑mic routing, permission flows. **Status:** built; verified in the simulator with synthetic plucks (debug `-tunerDemo` launch argument). Real-guitar accuracy is confirmed by the tuner clips in the M1 corpus | 1.5 wk |
-| M3 | Ear check | Sampler, cadence scheduling, degree/name/solfège answer modes, new difficulty ladder + staircase, rounds, results | 1.5 wk |
+| M3 | Ear check | Sampler, cadence scheduling, degree/name/solfège answer modes, new difficulty ladder + staircase, rounds, results. **Status:** built with synthesised guitar (Karplus–Strong) and piano (additive) instead of SoundFonts, both tested in tune; `ToneEngine` is the seam for swapping in recorded samples later. Rounds for long ear sessions come with the M5 planner | 1.5 wk |
 | M4 | Chord quiz + reveal | Live verification UI, feedback generator, voicing data + generator, reveal screen, results | 2.5 wk |
 | M5 | Personalisation | Item states, grading, scheduler, **minutes‑based planner** with self‑calibrating time costs, levels, Today screen wired to real data, streaks | 1.5 wk |
 | M6 | Free practice | Practice hub section, chord library + search, chord sets, custom ear session, "Practise these" from results | 1 wk |

@@ -9,6 +9,7 @@ let package = Package(
         .library(name: "RiffleDesign", targets: ["RiffleDesign"]),
         .library(name: "RiffleStore", targets: ["RiffleStore"]),
         .library(name: "RiffleAudio", targets: ["RiffleAudio"]),
+        .library(name: "RiffleQuiz", targets: ["RiffleQuiz"]),
     ],
     targets: [
         // Pure music theory: notes, intervals, scales, chords, tunings, voicings.
@@ -22,10 +23,13 @@ let package = Package(
         .target(name: "RiffleStore", dependencies: ["RiffleTheory"]),
         // Microphone capture, pitch detection, chord verification, test-clip corpus.
         .target(name: "RiffleAudio", dependencies: ["RiffleTheory"]),
+        // Quiz logic: ear-check sessions now; item model, scheduler and daily planner in M5.
+        .target(name: "RiffleQuiz", dependencies: ["RiffleTheory"]),
 
         .testTarget(name: "RiffleTheoryTests", dependencies: ["RiffleTheory"]),
         .testTarget(name: "RiffleDesignTests", dependencies: ["RiffleDesign"]),
         .testTarget(name: "RiffleStoreTests", dependencies: ["RiffleStore"]),
         .testTarget(name: "RiffleAudioTests", dependencies: ["RiffleAudio", "RiffleTheory"]),
+        .testTarget(name: "RiffleQuizTests", dependencies: ["RiffleQuiz", "RiffleTheory"]),
     ]
 )

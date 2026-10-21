@@ -11,6 +11,7 @@
 		A10000000000000000000002 /* RiffleDesign in Frameworks */ = {isa = PBXBuildFile; productRef = A20000000000000000000002 /* RiffleDesign */; };
 		A10000000000000000000003 /* RiffleStore in Frameworks */ = {isa = PBXBuildFile; productRef = A20000000000000000000003 /* RiffleStore */; };
 		A10000000000000000000004 /* RiffleAudio in Frameworks */ = {isa = PBXBuildFile; productRef = A20000000000000000000004 /* RiffleAudio */; };
+		A10000000000000000000005 /* RiffleQuiz in Frameworks */ = {isa = PBXBuildFile; productRef = A20000000000000000000005 /* RiffleQuiz */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,7 @@
 				A10000000000000000000002 /* RiffleDesign in Frameworks */,
 				A10000000000000000000003 /* RiffleStore in Frameworks */,
 				A10000000000000000000004 /* RiffleAudio in Frameworks */,
+				A10000000000000000000005 /* RiffleQuiz in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,6 +84,7 @@
 				A20000000000000000000002 /* RiffleDesign */,
 				A20000000000000000000003 /* RiffleStore */,
 				A20000000000000000000004 /* RiffleAudio */,
+				A20000000000000000000005 /* RiffleQuiz */,
 			);
 			productName = Riffle;
 			productReference = A30000000000000000000001 /* Riffle.app */;
@@ -324,6 +327,10 @@
 		A20000000000000000000004 /* RiffleAudio */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RiffleAudio;
+		};
+		A20000000000000000000005 /* RiffleQuiz */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RiffleQuiz;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

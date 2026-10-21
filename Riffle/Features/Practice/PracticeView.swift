@@ -1,4 +1,5 @@
 import RiffleDesign
+import RiffleQuiz
 import RiffleStore
 import RiffleTheory
 import SwiftData
@@ -14,6 +15,7 @@ struct PracticeView: View {
     @AppStorage(Pref.dailyMinutes) private var dailyMinutes = Pref.Default.dailyMinutes
     @State private var comingSoon: ComingSoon?
     @State private var showClipRecorder = false
+    @State private var showEarCheck = false
 
     // Until the planner exists (M5), Today shows a fixed sample plan.
     private let plan = TodayPlan.sample
@@ -24,7 +26,7 @@ struct PracticeView: View {
                 header.riseIn(delay: 0.05)
                 WeekDots(days: weekDots).riseIn(delay: 0.15)
                 ChordOfTheDayCard(plan: plan) { comingSoon = .chordQuiz }.riseIn(delay: 0.25)
-                EarCheckCard(plan: plan) { comingSoon = .earCheck }.riseIn(delay: 0.35)
+                EarCheckCard(plan: plan) { showEarCheck = true }.riseIn(delay: 0.35)
                 TuneUpRow(tuning: currentTuning, action: openTuner).riseIn(delay: 0.45)
                 FreePracticeSection { comingSoon = $0 }.riseIn(delay: 0.5)
                 #if DEBUG
@@ -38,6 +40,9 @@ struct PracticeView: View {
         .scrollIndicators(.hidden)
         .background(DotGridBackground())
         .fullScreenCover(item: $comingSoon) { ComingSoonView(feature: $0) }
+        .fullScreenCover(isPresented: $showEarCheck) {
+            EarCheckView(settings: plan.earSettings, seed: TodayPlan.daySeed())
+        }
         #if DEBUG
         .fullScreenCover(isPresented: $showClipRecorder) { ClipRecorderView() }
         #endif
@@ -126,6 +131,17 @@ struct TodayPlan {
 
     static let sample = TodayPlan(chordCount: 3, newChords: 1, chordLevel: 1, earCount: 10, earKey: Key(.C),
                                   earDifficulty: .easy)
+
+    var earSettings: EarSession.Settings {
+        let context = KeyContext(rawValue: UserDefaults.standard.string(forKey: Pref.keyContext) ?? "") ?? .cadence
+        return EarSession.Settings(level: EarLevel(rawValue: earDifficulty.rawValue) ?? .easy, key: earKey,
+                                   questionCount: earCount, context: context)
+    }
+
+    /// Same questions all day; a new set tomorrow. (M5 adds the install ID to the seed.)
+    static func daySeed(_ date: Date = .now) -> UInt64 {
+        UInt64(Calendar.current.ordinality(of: .day, in: .era, for: date) ?? 1)
+    }
 }
 
 #Preview {
