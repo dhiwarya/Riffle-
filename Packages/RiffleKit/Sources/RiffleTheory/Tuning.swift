@@ -25,6 +25,17 @@ public struct Tuning: Identifiable, Hashable, Codable, Sendable {
 
     public var isStandard: Bool { notes == Tuning.standard.notes }
 
+    /// How a player names a string in coaching text: "A string", or "low E string" / "high E string"
+    /// when two strings share a note name.
+    public func stringName(_ index: Int) -> String {
+        let name = strings[index].name
+        let same = strings.indices.filter { strings[$0].name == name }
+        guard same.count > 1 else { return "\(name) string" }
+        if index == same.first { return "low \(name) string" }
+        if index == same.last { return "high \(name) string" }
+        return "\(name) string"
+    }
+
     public func frequencies(a4: Double = 440) -> [Double] { notes.map { $0.frequency(a4: a4) } }
 
     /// The string whose open note is closest to `frequency`, by absolute cents.

@@ -58,3 +58,14 @@ public struct Phrase: Hashable, Sendable {
         return phrase
     }
 }
+
+extension Phrase {
+    /// A down-strum of `voicing`, low string first, `spacing` seconds apart (45 ms on the reveal screen).
+    public static func strum(_ voicing: Voicing, in tuning: Tuning, spacing: Double = 0.045,
+                             duration: Double = 2.2, velocity: Double = 0.7) -> Phrase {
+        let notes = voicing.notes(in: tuning).compactMap { $0 }
+        return Phrase(notes.enumerated().map { index, note in
+            PlaybackNote(midi: note.midi, offset: Double(index) * spacing, duration: duration, velocity: velocity)
+        })
+    }
+}

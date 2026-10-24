@@ -22,7 +22,8 @@ public final class LiveListener: @unchecked Sendable {
     public enum Analysis: Sendable, Equatable {
         case none
         case pitch
-        case chord(Chord)
+        /// Verify a target chord; `requiredBass` adds the lowest-note check (inversions, power chords).
+        case chord(Chord, requiredBass: PitchClass? = nil)
     }
 
     private let capture = MicrophoneCapture()
@@ -127,7 +128,10 @@ public final class LiveListener: @unchecked Sendable {
         switch analysis {
         case .none: break
         case .pitch: tracker = PitchTracker(sampleRate: sampleRate)
-        case .chord(let chord): verifier = ChordVerifier(target: chord, sampleRate: sampleRate)
+        case .chord(let chord, let bass):
+            var configuration = ChordVerifier.Configuration()
+            configuration.requiredBass = bass
+            verifier = ChordVerifier(target: chord, sampleRate: sampleRate, configuration: configuration)
         }
     }
 

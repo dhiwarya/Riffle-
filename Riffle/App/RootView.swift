@@ -1,4 +1,5 @@
 import RiffleDesign
+import RiffleTheory
 import SwiftUI
 
 enum AppTab: Hashable {
@@ -17,7 +18,22 @@ struct RootView: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             RiffleTabBar(selection: $tab)
         }
+        #if DEBUG
+        .fullScreenCover(item: $revealDemo) { chord in
+            ChordRevealView(chord: chord, tuning: Tuning.preset(id: UserDefaults.standard.string(forKey: "revealTuning") ?? "") ?? .standard, a4: 440)
+        }
+        .onAppear { revealDemo = Self.revealDemoChord }
+        #endif
     }
+
+    #if DEBUG
+    @State private var revealDemo: Chord?
+
+    /// Launch with `-revealDemo Am` (optionally `-revealTuning drop-d`) to open a chord's reveal screen.
+    private static var revealDemoChord: Chord? {
+        UserDefaults.standard.string(forKey: "revealDemo").flatMap(Chord.init(symbol:))
+    }
+    #endif
 
     private func screen(_ which: AppTab, @ViewBuilder content: () -> some View) -> some View {
         content()

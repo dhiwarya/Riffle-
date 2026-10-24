@@ -26,6 +26,35 @@ struct ChordVerifierTests {
 
     private func names(_ set: Set<PitchClass>) -> Set<String> { Set(set.map(\.description)) }
 
+    /// Every voicing the reveal screen can show for the quiz's chords passes when strummed cleanly;
+    /// triads also pass the bass check for their inversion. A sample by default (each voicing takes
+    /// about half a second in debug); `RIFFLE_ALL_VOICINGS=1` checks every quiz chord.
+    @Test func libraryVoicingsPass() {
+        let symbols = ProcessInfo.processInfo.environment["RIFFLE_ALL_VOICINGS"] == nil
+            ? "Am C B7 F Cmaj7 C9"
+            : "E A D G C Em Am Dm E7 A7 D7 G7 B7 C7 Dsus2 Dsus4 Asus2 Asus4 E5 G5 C5 F Bm B♭ F♯m Cm C♯m Cmaj7 Fmaj7 Am7 Dm7 Bm7♭5 Bdim7 Cadd9 C6 A6 Am6 C9 D9"
+        var failures: [String] = []
+        for symbol in symbols.split(separator: " ").map(String.init) {
+            let chord = Chord(symbol: symbol)!
+            let set = VoicingLibrary.voicings(for: chord, in: .standard)
+            for voicing in set.full {
+                let evidence = verify(symbol, strum(voicing.frets))
+                if evidence.verdict != .passed {
+                    failures.append("\(voicing.id) missing \(names(evidence.missing)) extra \(names(evidence.extra))")
+                }
+            }
+            for (inversion, triad) in set.triads.enumerated() {
+                var configuration = ChordVerifier.Configuration()
+                configuration.requiredBass = chord.tones[inversion].note.pitchClass
+                let evidence = verify(symbol, strum(triad.frets), configuration: configuration)
+                if evidence.verdict != .passed {
+                    failures.append("\(triad.id) bass \(evidence.bass.map(\.description) ?? "-") missing \(names(evidence.missing)) extra \(names(evidence.extra))")
+                }
+            }
+        }
+        #expect(failures.isEmpty, "\(failures.joined(separator: "\n"))")
+    }
+
     let amOpen: [Int?] = [nil, 0, 2, 2, 1, 0]
     let aOpen: [Int?] = [nil, 0, 2, 2, 2, 0]
 

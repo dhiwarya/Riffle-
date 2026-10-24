@@ -13,7 +13,9 @@ struct PracticeView: View {
     @Query(sort: \CustomTuning.createdAt) private var customTunings: [CustomTuning]
     @AppStorage(Pref.tuningID) private var tuningID = Pref.Default.tuningID
     @AppStorage(Pref.dailyMinutes) private var dailyMinutes = Pref.Default.dailyMinutes
+    @AppStorage(Pref.a4Hz) private var a4 = Pref.Default.a4Hz
     @State private var comingSoon: ComingSoon?
+    @State private var showChordQuiz = false
     @State private var showClipRecorder = false
     @State private var showEarCheck = false
 
@@ -25,7 +27,7 @@ struct PracticeView: View {
             VStack(alignment: .leading, spacing: 18) {
                 header.riseIn(delay: 0.05)
                 WeekDots(days: weekDots).riseIn(delay: 0.15)
-                ChordOfTheDayCard(plan: plan) { comingSoon = .chordQuiz }.riseIn(delay: 0.25)
+                ChordOfTheDayCard(plan: plan) { showChordQuiz = true }.riseIn(delay: 0.25)
                 EarCheckCard(plan: plan) { showEarCheck = true }.riseIn(delay: 0.35)
                 TuneUpRow(tuning: currentTuning, action: openTuner).riseIn(delay: 0.45)
                 FreePracticeSection { comingSoon = $0 }.riseIn(delay: 0.5)
@@ -40,6 +42,9 @@ struct PracticeView: View {
         .scrollIndicators(.hidden)
         .background(DotGridBackground())
         .fullScreenCover(item: $comingSoon) { ComingSoonView(feature: $0) }
+        .fullScreenCover(isPresented: $showChordQuiz) {
+            ChordQuizView(settings: plan.chordSettings(), tuning: currentTuning, a4: a4)
+        }
         .fullScreenCover(isPresented: $showEarCheck) {
             EarCheckView(settings: plan.earSettings, seed: TodayPlan.daySeed())
         }
@@ -136,6 +141,12 @@ struct TodayPlan {
         let context = KeyContext(rawValue: UserDefaults.standard.string(forKey: Pref.keyContext) ?? "") ?? .cadence
         return EarSession.Settings(level: EarLevel(rawValue: earDifficulty.rawValue) ?? .easy, key: earKey,
                                    questionCount: earCount, context: context)
+    }
+
+    /// Today's chords from the plan's level, the same all day.
+    func chordSettings(_ date: Date = .now) -> ChordQuizSession.Settings {
+        ChordQuizSession.Settings(items: ChordLevels.dailyItems(level: chordLevel, count: chordCount, seed: Self.daySeed(date)),
+                                  level: chordLevel)
     }
 
     /// Same questions all day; a new set tomorrow. (M5 adds the install ID to the seed.)
